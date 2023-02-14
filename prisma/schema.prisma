@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Dni {
+  VENEZOLANO
+  EXTRANJERO
+  JURIDICO
+  GUBERNAMENTAL
+  PASAPORTE
+}
+
+model Cliente {
+  id Int @id @default(autoincrement())
+  email String  @unique
+  dni  String
+  tipoDni Dni
+  libros Libro[]
+}
+
+enum Tripa {
+  FRONT_A
+  FRONT_B
+  BACK_A
+  BACK_B
+}
+
+enum Papel {
+  HOJAS
+  RESMA
+  BOBINA
+}
+
+model LibroTripa {
+  id Int @id @default(autoincrement())
+  tipoTripa Tripa
+  tipoPapel Papel
+  cantPorPliego Int @default(0)
+  pliegos Int @default(0)
+  numPaginas Int @default(0)
+  libro Libro @relation(fields: [libroId], references: [id])
+  libroId Int
+}
+
+model Libro {
+  id Int @id @default(autoincrement())
+  cantidad Int
+  tripas LibroTripa[]
+  cliente Cliente @relation(fields: [clienteId], references: [id])
+  clienteId Int
+}
